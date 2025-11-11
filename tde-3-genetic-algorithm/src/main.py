@@ -151,3 +151,4 @@ if __name__ == "__main__":
         x_df.to_numpy(), y_df.to_numpy(), n_generations=100, initial_population_size=5000
     )
     final_solutions = ga.run()
+    print(f"There are {len(final_solutions)} different genes.")
