@@ -1,0 +1,109 @@
+Baseline time: 3.8444
+Baseline solution using all features: 0.9210526315789473
+Initial population created with 5000 individuals.
+Generation 0
+Best from generation: 101001100110111110010010000001 with 0.9473684210526315 accuracy
+Generation 1
+Best from generation: 101001100110010001010010000110 with 0.9473684210526315 accuracy
+Generation 2
+Best from generation: 101011110011010001100010011100 with 0.9473684210526315 accuracy
+Generation 3
+Best from generation: 001001000100111001100010101011 with 0.9473684210526315 accuracy
+Generation 4
+Best from generation: 001010011100110110000010001101 with 0.9473684210526315 accuracy
+Generation 5
+Best from generation: 101000111011111011110010010001 with 0.9473684210526315 accuracy
+Generation 6
+Best from generation: 001001001000111100000010011001 with 0.9473684210526315 accuracy
+Generation 7
+Best from generation: 101011110010110111000010001101 with 0.9473684210526315 accuracy
+Generation 8
+Best from generation: 001000100111110100100010101110 with 0.9473684210526315 accuracy
+Generation 9
+Best from generation: 101010001101111011100010010111 with 0.9473684210526315 accuracy
+Generation 10
+Best from generation: 101001110110011111000010000010 with 0.9473684210526315 accuracy
+Generation 11
+Best from generation: 101011101000111010110010001000 with 0.9473684210526315 accuracy
+Generation 12
+Best from generation: 101001010010110111110010011001 with 0.9473684210526315 accuracy
+Generation 13
+Best from generation: 001000010000110000010010000100 with 0.9473684210526315 accuracy
+Generation 14
+Best from generation: 101011100001110010000010001101 with 0.9473684210526315 accuracy
+Generation 15
+Best from generation: 101010111111111011010010100011 with 0.9473684210526315 accuracy
+Generation 16
+Best from generation: 101010111000110010110010110111 with 0.9473684210526315 accuracy
+Generation 17
+Best from generation: 101001000100110011000010010100 with 0.9473684210526315 accuracy
+Generation 18
+Best from generation: 101011111100110101110010111111 with 0.9473684210526315 accuracy
+Generation 19
+Best from generation: 001001110100110010110010101011 with 0.9473684210526315 accuracy
+Generation 20
+Best from generation: 101001111001111100000010010010 with 0.9473684210526315 accuracy
+Generation 21
+Best from generation: 101001011001011000010010101000 with 0.9473684210526315 accuracy
+Generation 22
+Best from generation: 101001111111111110000010011101 with 0.9473684210526315 accuracy
+Generation 23
+Best from generation: 001001111110110010010010000100 with 0.9473684210526315 accuracy
+Generation 24
+Best from generation: 101010001111111110100010011101 with 0.9473684210526315 accuracy
+Generation 25
+Best from generation: 101011001101111001110010000110 with 0.9473684210526315 accuracy
+Generation 26
+Best from generation: 101010100010111100100010000110 with 0.9473684210526315 accuracy
+Generation 27
+Best from generation: 101001000110110001110010101111 with 0.9473684210526315 accuracy
+Generation 28
+Best from generation: 001000010100110110000010111011 with 0.9473684210526315 accuracy
+Generation 29
+Best from generation: 101000010101011011110010100101 with 0.9473684210526315 accuracy
+Generation 30
+Best from generation: 001001010100110101010010100001 with 0.9473684210526315 accuracy
+Generation 31
+Best from generation: 001011001010110010010010110001 with 0.9473684210526315 accuracy
+Generation 32
+Best from generation: 101000100011110000100010001011 with 0.9473684210526315 accuracy
+Generation 33
+Best from generation: 001011110001111010100010110010 with 0.9473684210526315 accuracy
+Generation 34
+Best from generation: 001000011000110111010010101110 with 0.9473684210526315 accuracy
+Generation 35
+Best from generation: 101010011110010111000010110011 with 0.9473684210526315 accuracy
+Generation 36
+Best from generation: 101001111001111000100010001111 with 0.9473684210526315 accuracy
+Generation 37
+Best from generation: 101011001010110100100010001111 with 0.9473684210526315 accuracy
+Generation 38
+Best from generation: 101001001111110000100010001011 with 0.9473684210526315 accuracy
+Generation 39
+Best from generation: 101010110001110100000010100100 with 0.9473684210526315 accuracy
+Generation 40
+Best from generation: 001000100101111010010010101010 with 0.9473684210526315 accuracy
+Generation 41
+Best from generation: 101001011010110100010010100000 with 0.9473684210526315 accuracy
+Generation 42
+Best from generation: 101001110110110001100010000100 with 0.9473684210526315 accuracy
+Generation 43
+Best from generation: 101001010010111100000010101001 with 0.9473684210526315 accuracy
+Generation 44
+Best from generation: 001011101110110010010010100010 with 0.9473684210526315 accuracy
+Generation 45
+Best from generation: 001001110111111101110010001111 with 0.9473684210526315 accuracy
+Generation 46
+Best from generation: 101011011100111001100010111110 with 0.9473684210526315 accuracy
+Generation 47
+Best from generation: 101010111100110000010010101111 with 0.9473684210526315 accuracy
+Generation 48
+Best from generation: 101001111101011111110010110001 with 0.9473684210526315 accuracy
+Generation 49
+Best from generation: 101011000000110111100010101010 with 0.9473684210526315 accuracy
+Genetic Algorithm time: 1385.7680
+func:'run' args:[(<__main__.GeneticAlgorithm object at 0x000001C3F7261040>,), {}] took: 1385.7680 sec
+There are 4890 different genes.
+Best GA Solution: Solution(gene='001010110001110101110010100101', fitness=0.9473684210526315) vs All features knn: 0.9210526315789473
+ Gain of 0.0278 %
+Best gene is using features: mean perimeter, mean smoothness, mean concavity, mean concave points, texture error, perimeter error, area error, compactness error, concave points error, symmetry error, fractal dimension error, worst perimeter, worst smoothness, worst concave points, worst fractal dimension
