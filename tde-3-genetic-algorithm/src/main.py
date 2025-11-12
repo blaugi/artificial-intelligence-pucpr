@@ -2,6 +2,8 @@ import random
 from dataclasses import dataclass
 from itertools import batched
 from collections import OrderedDict
+from functools import wraps
+from time import time
 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
@@ -11,8 +13,6 @@ import pandas as pd
 
 RANDOM_STATE = 23
 NUM_FEATURES = 30
-
-
 @dataclass
 class Solution:
     gene: str
@@ -60,7 +60,6 @@ def tournament_selection(solutions_w_fitness: list[Solution], tournament_size: i
             if curr_element.fitness > best.fitness:
                 best = curr_element
         mating_pool.append(best)
-
     return mating_pool
 
 
@@ -70,19 +69,21 @@ def uniform_crossover(
     mutation_chance: float = 0.05,
     crossover_rate: float = 0.85,
 ):
-    # mutate before anything since the inversion will be kept regardless
+    if random.uniform(0, 1) > crossover_rate:
+        # no crossover
+        return parent_a, parent_b
+
+    # mutate before since the inversion will be kept regardless
     for i in range(NUM_FEATURES):
         if random.uniform(0, 1) <= mutation_chance:
             inverse = "0" if parent_a.gene[i] == "1" else "1"
             parent_a.gene = parent_a.gene[:i] + inverse + parent_a.gene[i + 1 :]
+            parent_a.fitness = None
         # need to re-run the flip
         if random.uniform(0, 1) <= mutation_chance:
-            inverse = "0" if parent_a.gene[i] == "1" else "1"
+            inverse = "0" if parent_b.gene[i] == "1" else "1"
             parent_b.gene = parent_b.gene[:i] + inverse + parent_b.gene[i + 1 :]
-
-    if random.uniform(0, 1) > crossover_rate:
-        # no crossover
-        return parent_a, parent_b
+            parent_b.fitness = None
 
     mask = random.choices(["A", "B"], k=NUM_FEATURES)
     inv_mask = ["B" if k == "A" else "A" for k in mask]
@@ -142,6 +143,7 @@ class GeneticAlgorithm:
             solution.fitness = self._fitness_cache(solution.gene)
 
     def run(self):
+        ts =time()
         population = []
         for i in range(self.pop_size):
             solution = Solution("".join(random.choices(["1", "0"], k=NUM_FEATURES)))
@@ -159,7 +161,7 @@ class GeneticAlgorithm:
             print(
                 f"Best from generation: {curr_best.gene} with {curr_best.fitness} accuracy"
             )
-            selected_parents = tournament_selection(population, 100)
+            selected_parents = tournament_selection(population, 10)
             # reset the population
             population = []
             random.shuffle(
@@ -171,6 +173,9 @@ class GeneticAlgorithm:
 
         for solution in population:
             self.compute_fitness(solution)
+
+        te = time()
+        print(f'Genetic Algorithm time: {te-ts:2.4f}')
         return set(population)
 
 
@@ -179,15 +184,18 @@ if __name__ == "__main__":
     x_df, y_df = load_breast_cancer(as_frame=True, return_X_y=True)
 
     ga = GeneticAlgorithm(
-        x_df.to_numpy(), y_df.to_numpy(), n_generations=50, initial_population_size=5000
+        x_df.to_numpy(), y_df.to_numpy(), n_generations=5``0, initial_population_size=5000
     )
-
     neigh = KNeighborsClassifier()
+
+    ts = time()
     neigh.fit(ga.x_train, ga.y_train.to_numpy().ravel())
     pred = neigh.predict(ga.x_test)
     acc_base = accuracy_score(
         y_true=ga.y_test.to_numpy().ravel(), y_pred=pred, normalize=True
     )
+    te = time()
+    print(f'Baseline time: {te-ts:2.4f}')
     print(f"Baseline solution using all features: {acc_base}")
 
     final_solutions = ga.run()
@@ -200,4 +208,6 @@ if __name__ == "__main__":
     best_gene_features = [
         x_df.iloc[:, i].name for i in range(len(best_ga.gene)) if best_ga.gene[i] == "1"
     ]
-    print(f"Best gene is using features: { ', '.join(str(feature) for feature in best_gene_features)}")
+    print(
+        f"Best gene is using features: {', '.join(str(feature) for feature in best_gene_features)}"
+    )
