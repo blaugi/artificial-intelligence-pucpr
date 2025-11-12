@@ -1,6 +1,7 @@
 import random
 from dataclasses import dataclass
 from itertools import batched
+from collections import OrderedDict
 
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
@@ -22,12 +23,34 @@ class Solution:
 
     def __eq__(self, other):
         if not isinstance(other, Solution):
-            return NotImplemented # Or raise TypeError
+            return NotImplemented
         return self.gene == other.gene
 
+    def __gt__(self, other):
+        if isinstance(other, Solution):
+            return self.fitness > other.fitness
+        return NotImplemented
 
-# TODO maybe add elitism for n genes then tournament for pool_size - n
-# mating pool will be the same size as the
+
+class SolutionsCache:
+    def __init__(self, func, maxsize=512, maxage=30):
+        self.cache = OrderedDict()  # { args : (timestamp, result)}
+        self.func = func
+        self.maxsize = maxsize
+
+    def __call__(self, *args):
+        if args in self.cache:
+            self.cache.move_to_end(args)
+            result = self.cache[args]
+            return result
+        result = self.func(*args)
+        self.cache[args] = result
+        if len(self.cache) > self.maxsize:
+            self.cache.popitem(last=False)
+        return result
+
+
+# mating pool will be the same size as the original pop
 def tournament_selection(solutions_w_fitness: list[Solution], tournament_size: int):
     mating_pool = []
     for _ in solutions_w_fitness:
@@ -97,24 +120,26 @@ class GeneticAlgorithm:
 
         self.pop_size = initial_population_size
         self.n_generations = n_generations
+        self._fitness_cache = SolutionsCache(self._fitness_func, maxsize=2048)
 
-    def compute_fitness(self, solution: Solution):
-        # TODO add check if already computed solution, would only make sense if i create a cache of solutions
-        features = []
-        for i in range(len(solution.gene)):
-            if solution.gene[i] == "1":
-                features.append(self.x_train.iloc[:, i].name)
-            else:
-                pass
+    def _fitness_func(self, gene: str) -> float:
+        features = [
+            self.x_train.iloc[:, i].name for i in range(len(gene)) if gene[i] == "1"
+        ]
         gene_train = self.x_train.loc[:, self.x_train.columns.isin(features)]
         gene_test = self.x_test.loc[:, self.x_test.columns.isin(features)]
+
         neigh = KNeighborsClassifier()
         neigh.fit(gene_train, self.y_train.to_numpy().ravel())
         gene_pred = neigh.predict(gene_test)
 
-        solution.fitness = accuracy_score(
-            y_true=self.y_test, y_pred=gene_pred, normalize=True
+        return accuracy_score(
+            y_true=self.y_test.to_numpy().ravel(), y_pred=gene_pred, normalize=True
         )
+
+    def compute_fitness(self, solution: Solution):
+        if solution.fitness is None:
+            solution.fitness = self._fitness_cache(solution.gene)
 
     def run(self):
         population = []
@@ -128,8 +153,12 @@ class GeneticAlgorithm:
             curr_best = Solution("", 0)
             for solution in population:
                 self.compute_fitness(solution)
-                curr_best = solution if solution.fitness > curr_best.fitness else curr_best
-            print(f"Best from generation: {curr_best.gene} with {curr_best.fitness} accuracy")
+                curr_best = (
+                    solution if solution.fitness > curr_best.fitness else curr_best
+                )
+            print(
+                f"Best from generation: {curr_best.gene} with {curr_best.fitness} accuracy"
+            )
             selected_parents = tournament_selection(population, 100)
             # reset the population
             population = []
@@ -140,6 +169,8 @@ class GeneticAlgorithm:
                 children = uniform_crossover(parents[0], parents[1])
                 population.extend(children)
 
+        for solution in population:
+            self.compute_fitness(solution)
         return set(population)
 
 
@@ -148,7 +179,25 @@ if __name__ == "__main__":
     x_df, y_df = load_breast_cancer(as_frame=True, return_X_y=True)
 
     ga = GeneticAlgorithm(
-        x_df.to_numpy(), y_df.to_numpy(), n_generations=100, initial_population_size=5000
+        x_df.to_numpy(), y_df.to_numpy(), n_generations=50, initial_population_size=5000
     )
+
+    neigh = KNeighborsClassifier()
+    neigh.fit(ga.x_train, ga.y_train.to_numpy().ravel())
+    pred = neigh.predict(ga.x_test)
+    acc_base = accuracy_score(
+        y_true=ga.y_test.to_numpy().ravel(), y_pred=pred, normalize=True
+    )
+    print(f"Baseline solution using all features: {acc_base}")
+
     final_solutions = ga.run()
     print(f"There are {len(final_solutions)} different genes.")
+    best_ga = max(final_solutions)
+
+    print(
+        f"Best GA Solution: {best_ga} vs All features knn: {acc_base} \n Gain of {1 - (acc_base / best_ga.fitness):.4f} %"
+    )
+    best_gene_features = [
+        x_df.iloc[:, i].name for i in range(len(best_ga.gene)) if best_ga.gene[i] == "1"
+    ]
+    print(f"Best gene is using features: { ', '.join(str(feature) for feature in best_gene_features)}")
