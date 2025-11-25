@@ -7,6 +7,9 @@
 )
 
 = TDE 3 - Genetic Algorithm for Feature Selection
+
+#align(right)[_Matheus Girardi, Andrei Silva, Evandro Diniz_]
+
 This project aimed to make use of a genetic algorithm to generate the ideal subset of features from the breast cancer Wisconsin dataset.
 
 === Representing Solutions
@@ -116,7 +119,7 @@ After running the Genetic Algorithm (GA) for 50 generations with a population si
 
 The best solution the GA found was utilising the following features: mean perimeter, mean smoothness, mean concavity, mean concave points, texture error, perimeter error, area error, compactness error, concave points error, symmetry error, fractal dimension error, worst perimeter, worst smoothness, worst concave points and worst fractal dimension.
 
-As shown in @results_table, the genetic algorithm provided a 2.6 % accuracy gain over the baseline. The execution time was significantly higher, however it is important to mention that 
+As shown in @results_table, the genetic algorithm provided a 2.6 % accuracy gain over the baseline. The execution time was significantly higher, however it is important to mention that the best result was achieved in an early generation, as such the number of generations was configured to be high so as to perform a more exhaustive search.
 
 #figure(
   table(
